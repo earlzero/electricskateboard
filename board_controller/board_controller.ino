@@ -25,6 +25,9 @@ void setup() {
   motor.writeMicroseconds(1000);
 }
 
+int timeouts = 0;
+int max_timeouts = 3;
+int speed = 0;
 void loop() {
 
   boolean timeout = false;
@@ -36,11 +39,15 @@ void loop() {
     }
   }
   if (timeout) {
-       motor.write(92);
+       timeouts++;
+       if(timeouts > max_timeouts) {
+        speed = 92;
+       }
   } else {
-    int value = 0;
-    radio.read(&value, sizeof(int));
-    Serial.println(value);
-    motor.write(value);
+    timeouts = 0;
+    speed = 0;
+    radio.read(&speed, sizeof(int));
+    Serial.println(speed);
   }
+      motor.write(speed);
 }
